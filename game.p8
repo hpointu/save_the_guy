@@ -4,15 +4,15 @@ __lua__
 -- save the guy
 -- by freddy
 
-g = 0.05
-gaz = 0.15
+g = 0.06
+gaz = 0.25
 max_vh = 1.5
 map_w = 46
 map_h = 16
 max_x = map_w * 8 - 16
 drop_limit = 5
 crash_speed = 1.2
-max_fuel = 40
+max_fuel = 50
 
 function pos_eq(a, b)
  return flr(a.x) == flr(b.x) and flr(a.y) == flr(b.y)
