@@ -10,9 +10,9 @@ max_vh = 1.5
 map_w = 46
 map_h = 16
 max_x = map_w * 8 - 16
-drop_limit = 3
+drop_limit = 5
 crash_speed = 1.5  -- might be too permissive
-max_fuel = 30
+max_fuel = 40
 
 function pos_eq(a, b)
  return flr(a.x) == flr(b.x) and flr(a.y) == flr(b.y)
@@ -103,13 +103,14 @@ function init_game()
 	flipped = false
 	score = 0
 	fuel = max_fuel
-	for i=0,2 do spawn_guy() end
+	for i=0,4 do spawn_guy() end
 	update_fires()
 end
 
 function drop_guys()
+ local points = #to_drop
 	for g in all(to_drop) do
-	 score += g.score
+	 score += points
 		del(to_drop, g)
 		add(running, g)
 		g.y = pos.y
