@@ -234,9 +234,9 @@ end
 
 
 function draw_fuel()
-	local w = fuel*25/max_fuel
-	rectfill(100, 10, 100 + w, 13, 2)
-	rect(100, 9, 125, 14, 7)
+	local w = fuel*30/max_fuel
+	rectfill(95, 10, 95 + w, 13, 2)
+	rect(95, 9, 125, 14, 7)
 end
 
 
