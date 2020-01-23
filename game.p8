@@ -4,7 +4,6 @@ __lua__
 -- save the guy
 -- by freddy
 
-
 g = 0.05
 gaz = 0.15
 max_vh = 1.5
@@ -38,19 +37,31 @@ function player_cells()
 	}
 end
 
-function player_rope_cells()
- local c = cell(pos)
- local back = {x=c.x, y=c.y+1}
- if(flipped) back = {x=c.x+2, y=c.y+1}
+function hitbox()
 	return {
-	 back,
-		{x=c.x+1, y=c.y+1},
+		x=pos.x + 2,
+		y=pos.y,
+		w=12,
+		h=8,
 	}
 end
 
-function player_on_cell(cell)
-	for c in all(player_cells()) do
-		if pos_eq(cell, c) then return true end
+function px_flag(x, y)
+	return fget(mget(x/8, y/8))
+end
+
+function touches(box, bits)
+	for i=box.x,box.x+box.w,2 do
+		local p1 = px_flag(i, box.y)
+		local p2 = px_flag(i, box.y+box.h)
+		if(band(bor(p1, p2), bits) == bits) then
+			return true end
+	end
+	for i=box.y,box.y+box.h,2 do
+		local p1 = px_flag(box.x, i)
+		local p2 = px_flag(box.x+box.w, i)
+		if(band(bor(p1, p2), bits) == bits) then
+			return true end
 	end
 	return false
 end
@@ -90,16 +101,14 @@ function init_game()
 end
 
 function pickup_guy()
- local ropes = player_rope_cells()
 	for g in all(guys) do
-		local gc = cell(g)
-		for rope in all(ropes) do
-		 if pos_eq(rope, gc) then
-		 	del(guys, g)
-		 	score += fget(mget(gc.x, gc.y)) - 1
-		 end
-		end
-	end
+		local gbox = {x=g.x,	y=g.y,
+																w=8,	h=8}
+		if aabb_collide(hitbox(), gbox) then
+			del(guys, g)
+	 	score += px_flag(g.x, g.y) - 1
+ 	end
+ end
 end
 
 function update_camera()
@@ -121,15 +130,6 @@ end
 function cell(p)
 	return {x=flr(p.x / 8) + 0,
 	        y=flr(p.y / 8) + 0}
-end
-
-function player_flags()
-	local cells = player_cells()
-	local flags = 0
-	for c in all(cells) do
-	 flags = bor(flags, fget(mget(c.x, c.y)))
-	end
- return flags
 end
 
 function _update()
@@ -200,19 +200,21 @@ function _draw()
 	end
 end
 
-function touches()
-	local flags = player_flags()
-	return band(flags, 1) == 1	
-end
-
 function collides()
-	if (touches()) then return true end
+	if (touches(hitbox(), 1)) then return true end
 	return false
 end
 
 
 function _init()
 	init_game()
+end
+-->8
+function aabb_collide(a, b)
+	return a.x < b.x + b.w and 
+	       a.x + a.w > b.x and
+	       a.y < b.y + b.h and
+	       a.y + a.h > b.y
 end
 __gfx__
 00000000dddddddddddddddd55555555000000000000055555555500000555555555555500000000000000000000000000000000000080000008000000000080
@@ -362,7 +364,7 @@ __label__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 __gff__
-0001010106000000000000000000000000010100020000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0001010106000000000202020200000000010100020000000002020202800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
